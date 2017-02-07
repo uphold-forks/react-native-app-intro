@@ -66,6 +66,10 @@ class Example extends Component {
   doneBtnHandle = () => {
     Alert.alert('Done');
   }
+  backBtnHandle = (index) => {
+    Alert.alert('Back');
+    console.log(index);
+  }
   nextBtnHandle = (index) => {
     Alert.alert('Next');
     console.log(index);
@@ -77,6 +81,7 @@ class Example extends Component {
   render() {
     return (
       <AppIntro
+        onBackBtnClick={this.backBtnHandle}
         onNextBtnClick={this.nextBtnHandle}
         onDoneBtnClick={this.doneBtnHandle}
         onSkipBtnClick={this.onSkipBtnHandle}

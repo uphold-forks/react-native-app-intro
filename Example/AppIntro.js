@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import BackButton from './components/BackButton';
 import DoneButton from './components/DoneButton';
 import SkipButton from './components/SkipButton';
 import RenderDots from './components/Dots';
@@ -90,6 +91,11 @@ const defaulStyles = {
     alignItems: 'center',
     height: 50,
   },
+  backButtonText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    fontFamily: 'Arial',
+  },
   nextButtonText: {
     fontSize: 25,
     fontWeight: 'bold',
@@ -110,11 +116,31 @@ export default class AppIntro extends Component {
     this.styles = StyleSheet.create(assign({}, defaulStyles, props.customStyles));
 
     this.state = {
+      backFadeOpacity: new Animated.Value(0),
       skipFadeOpacity: new Animated.Value(1),
       doneFadeOpacity: new Animated.Value(0),
       nextOpacity: new Animated.Value(1),
       parallax: new Animated.Value(0),
     };
+  }
+
+  onBackBtnClick = (context) => {
+    if (context.state.isScrolling || context.state.total < 2 || context.state.index === 0) return;
+    const state = context.state;
+    const diff = context.state.index - 1;
+    let x = 0;
+    if (state.dir === 'x') x = diff * state.width;
+    if (Platform.OS === 'ios') {
+      context.refs.scrollView.scrollTo({ y: 0, x });
+    } else {
+      context.refs.scrollView.setPage(diff);
+      context.onScrollEnd({
+        nativeEvent: {
+          position: diff,
+        },
+      });
+    }
+    this.props.onBackBtnClick(context.state.index);
   }
 
   onNextBtnClick = (context) => {
@@ -136,12 +162,20 @@ export default class AppIntro extends Component {
     this.props.onNextBtnClick(context.state.index);
   }
 
+  setBackBtnOpacity = (value) => {
+    Animated.timing(
+      this.state.backFadeOpacity,
+      { toValue: value },
+    ).start();
+  }
+
   setDoneBtnOpacity = (value) => {
     Animated.timing(
       this.state.doneFadeOpacity,
       { toValue: value },
     ).start();
   }
+
 
   setSkipBtnOpacity = (value) => {
     Animated.timing(
@@ -203,14 +237,7 @@ export default class AppIntro extends Component {
     }
     return (
       <View style={[this.styles.paginationContainer]}>
-        {this.props.showSkipButton ? <SkipButton
-          {...this.props}
-          {...this.state}
-          isSkipBtnShow={isSkipBtnShow}
-          styles={this.styles}
-          onSkipBtnClick={() => this.props.onSkipBtnClick(index)} /> :
-          <View style={this.styles.btnContainer} />
-        }
+        {this.renderLeftButton(context, index, isSkipBtnShow)}
         {this.props.showDots && RenderDots(index, total, {
           ...this.props,
           styles: this.styles
@@ -226,6 +253,40 @@ export default class AppIntro extends Component {
           }
       </View>
     );
+  }
+
+  renderLeftButton(context, index, isSkipBtnShow) {
+    if (this.props.showSkipButton) {
+      return (
+        <SkipButton
+          {...this.props}
+          {...this.state}
+          isSkipBtnShow={isSkipBtnShow}
+          onSkipBtnClick={() => this.props.onSkipBtnClick(index)}
+          styles={this.styles}
+        />
+      );
+    }
+
+    if (this.props.showBackButton) {
+      if (index === 0) {
+        this.setBackBtnOpacity(0);
+      } else {
+        this.setBackBtnOpacity(1);
+      }
+
+      return (
+        <BackButton
+          {...this.props}
+          {...this.state}
+          isBackBtnShow={index > 0}
+          onBackBtnClick={() => this.onBackBtnClick(context)}
+          styles={this.styles}
+        />
+      );
+    }
+
+    return <View style={this.styles.btnContainer} />;
   }
 
   renderBasicSlidePage = (index, {
@@ -373,6 +434,7 @@ AppIntro.propTypes = {
   activeDotColor: PropTypes.string,
   rightTextColor: PropTypes.string,
   leftTextColor: PropTypes.string,
+  onBackBtnClick: PropTypes.func,
   onSlideChange: PropTypes.func,
   onSkipBtnClick: PropTypes.func,
   onDoneBtnClick: PropTypes.func,
@@ -386,12 +448,17 @@ AppIntro.propTypes = {
     PropTypes.string,
     PropTypes.element,
   ]),
+  backBtnLabel: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.element,
+  ]),
   nextBtnLabel: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.element,
   ]),
   customStyles: PropTypes.object,
   defaultIndex: PropTypes.number,
+  showBackButton: PropTypes.bool,
   showSkipButton: PropTypes.bool,
   showDoneButton: PropTypes.bool,
   showDots: PropTypes.bool,
@@ -403,14 +470,17 @@ AppIntro.defaultProps = {
   rightTextColor: '#fff',
   leftTextColor: '#fff',
   pageArray: [],
+  onBackBtnClick: () => {},
   onSlideChange: () => {},
   onSkipBtnClick: () => {},
   onDoneBtnClick: () => {},
   onNextBtnClick: () => {},
   doneBtnLabel: 'Done',
   skipBtnLabel: 'Skip',
+  backBtnLabel: '‹',
   nextBtnLabel: '›',
   defaultIndex: 0,
+  showBackButton: false,
   showSkipButton: true,
   showDoneButton: true,
   showDots: true
