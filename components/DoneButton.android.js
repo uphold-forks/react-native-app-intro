@@ -8,16 +8,22 @@ import {
 export const DoneButton = ({
   styles, onDoneBtnClick, onNextBtnClick,
   rightTextColor, isDoneBtnShow,
-  doneBtnLabel, nextBtnLabel,
+  doneBtnLabel, nextBtnElement, nextBtnLabel,
 }) => {
   return (
-    <View style={[styles.btnContainer, { height: 0, paddingBottom: 5 }]}>
-      <TouchableOpacity style={styles.full}
+    <View style={[styles.btnContainer]}>
+      <TouchableOpacity style={[styles.full, styles.nextBtn]}
         onPress={ isDoneBtnShow ? onDoneBtnClick : onNextBtnClick}
       >
-       <Text style={[styles.nextButtonText, { color: rightTextColor }]}>
-         {isDoneBtnShow ? doneBtnLabel : nextBtnLabel}
-       </Text>
+        {!isDoneBtnShow && nextBtnElement && nextBtnElement}
+
+        {!nextBtnElement && !isDoneBtnShow && <Text style={[styles.nextButtonText, { color: rightTextColor }]}>
+          {nextBtnLabel}
+        </Text>}
+
+        {isDoneBtnShow && <Text style={[styles.nextButtonText, { color: rightTextColor }]}>
+          {doneBtnLabel}
+        </Text>}
       </TouchableOpacity>
     </View>
   )
