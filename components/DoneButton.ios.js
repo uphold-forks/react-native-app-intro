@@ -9,11 +9,11 @@ import {
 export const DoneButton = ({
   styles, onDoneBtnClick, onNextBtnClick,
   rightTextColor, isDoneBtnShow,
-  doneBtnLabel, nextBtnLabel,
+  doneBtnLabel, nextBtnElement, nextBtnLabel,
   doneFadeOpacity, skipFadeOpacity, nextOpacity
 }) => {
   return (
-    <View style={styles.btnContainer}>
+    <View style={[styles.btnContainer, styles.nextBtnContainer]}>
       <Animated.View style={[styles.full, { height: 0 }, {
         opacity: doneFadeOpacity,
         transform: [{
@@ -25,19 +25,19 @@ export const DoneButton = ({
       }]}
       >
         <View style={styles.full}>
-          <Text style={[styles.controllText, {
-            color: rightTextColor, paddingRight: 30,
-          }]}>
+          <Text style={[{ color: rightTextColor, paddingRight: 30 }, styles.controllText]}>
             {doneBtnLabel}
           </Text>
         </View>
       </Animated.View>
       <Animated.View style={[styles.full, { height: 0 }, { opacity: nextOpacity }]}>
-        <TouchableOpacity style={styles.full}
+        <TouchableOpacity style={[styles.full, styles.fullNext]}
           onPress={ isDoneBtnShow ? onDoneBtnClick : onNextBtnClick}>
-         <Text style={[styles.nextButtonText, { color: rightTextColor }]}>
-          {nextBtnLabel}
-        </Text>
+            {nextBtnElement && nextBtnElement}
+
+            {!nextBtnElement && nextBtnLabel && <Text style={[{ color: rightTextColor }, styles.nextBtnText]}>
+              {nextBtnLabel}
+            </Text>}
         </TouchableOpacity>
       </Animated.View>
     </View>

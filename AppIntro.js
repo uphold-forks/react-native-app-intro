@@ -91,12 +91,12 @@ const defaulStyles = {
     alignItems: 'center',
     height: 50,
   },
-  backButtonText: {
+  backBtnText: {
     fontSize: 25,
     fontWeight: 'bold',
     fontFamily: 'Arial',
   },
-  nextButtonText: {
+  nextBtnText: {
     fontSize: 25,
     fontWeight: 'bold',
     fontFamily: 'Arial',
@@ -448,14 +448,10 @@ AppIntro.propTypes = {
     PropTypes.string,
     PropTypes.element,
   ]),
-  backBtnLabel: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.element,
-  ]),
-  nextBtnLabel: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.element,
-  ]),
+  backBtnElement: PropTypes.element,
+  backBtnLabel: PropTypes.string,
+  nextBtnElement: PropTypes.element,
+  nextBtnLabel: PropTypes.string,
   customStyles: PropTypes.object,
   defaultIndex: PropTypes.number,
   showBackButton: PropTypes.bool,

@@ -11,11 +11,12 @@ export const BackButton = ({
   isBackBtnShow,
   onBackBtnClick,
   leftTextColor,
+  backBtnElement,
   backBtnLabel,
   backFadeOpacity
 }) => {
   return (
-    <Animated.View style={[styles.btnContainer, {
+    <Animated.View style={[{ right: 15 }, styles.btnContainer, styles.backBtnContainer, {
       opacity: backFadeOpacity,
       transform: [{
         translateX: backFadeOpacity.interpolate({
@@ -26,11 +27,13 @@ export const BackButton = ({
     }]}
     >
       <TouchableOpacity
-        style={styles.full}
+        style={[styles.full, styles.fullBack]}
         onPress={isBackBtnShow ? () => onBackBtnClick() : null}>
-        <Text style={[styles.backButtonText, { color: leftTextColor }]}>
-          {backBtnLabel}
-        </Text>
+        {backBtnElement && backBtnElement}
+
+        {!backBtnElement && backBtnLabel && <Text style={[{ color: options.leftTextColor }, options.styles.backBtnText]}>
+          {options.backBtnLabel}
+        </Text>}
       </TouchableOpacity>
     </Animated.View>
   )
